@@ -1,118 +1,201 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Sidebar.jsx — Navegación lateral de la aplicación
-//
-// PROPS:
-//   onOpenChat {function} — callback para abrir el panel del chatbot
-//
-// NOTAS:
-//   - El item activo está hardcodeado en navItems (active: true)
-//   - En una app con múltiples rutas, usar React Router y detectar
-//     la ruta activa con useLocation()
-//   - Las stats rápidas (uptime, tiendas) deben recibirse como props
-//     desde Dashboard cuando el backend esté conectado
-// ─────────────────────────────────────────────────────────────────────────────
 import rappiLogo from "../assets/logorappi.png";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
 
 const navItems = [
   {
-    label: "Dashboard", active: true,
-    icon: (<svg width="15" height="15" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="10" y="1" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="1" y="10" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="10" y="10" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/></svg>),
+    label: "Dashboard",
+    path: "/",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
+        <rect x="1" y="1" width="7" height="7" rx="1.5" fill="currentColor" />
+        <rect x="10" y="1" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5" />
+        <rect x="1" y="10" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5" />
+        <rect x="10" y="10" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5" />
+      </svg>
+    ),
   },
   {
-    label: "Historial", active: false,
-    icon: (<svg width="15" height="15" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="currentColor" strokeWidth="1.2"/><path d="M9 5v4l2.5 2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>),
+    label: "Sobre el proyecto",
+    path: "/about",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="7.5" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M9 7v5M9 5.5v.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
   },
   {
-    label: "Tiendas", active: false,
-    icon: (<svg width="15" height="15" viewBox="0 0 18 18" fill="none"><path d="M2 9h14M2 4.5h14M2 13.5h14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>),
+    label: "Equipo",
+    path: "/team",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
+        <circle cx="7" cy="6" r="3" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M1 15c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M13 8c1.7 0 3 1.2 3 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
   },
 ];
 
 export default function Sidebar({ onOpenChat }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
-    <aside style={styles.sidebar}>
+    <>
+      <div
+        className={`sidebar-overlay ${mobileOpen ? "active" : ""}`}
+        onClick={() => setMobileOpen(false)}
+      />
 
-      {/* Logo */}
-<div style={styles.logo}>
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-    <img
-      src={rappiLogo}
-      alt="Rappi"
-      style={styles.logoImg}
-    />
-    <span style={styles.logoText}>Makers</span>
-  </div>
-  <small style={styles.logoSub}>Análisis de tiendas</small>
-</div>
+      <button
+        className="hamburger-btn"
+        style={styles.hamburger}
+        onClick={() => setMobileOpen(true)}
+        aria-label="Abrir menú"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path
+            d="M2 5h16M2 10h16M2 15h16"
+            stroke="#FF441F"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
 
-      {/* Nav principal */}
-      <div style={styles.section}>
-        <div style={styles.sectionLabel}>Menu</div>
-        {navItems.map((item) => (
+      <aside
+        style={styles.sidebar}
+        className={`sidebar-mobile ${mobileOpen ? "open" : ""}`}
+      >
+        <button
+          className="sidebar-close-btn"
+          style={styles.closeBtn}
+          onClick={() => setMobileOpen(false)}
+          aria-label="Cerrar menú"
+        >
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path
+              d="M1 1l11 11M12 1L1 12"
+              stroke="rgba(255,255,255,0.7)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+
+        <div style={styles.logo}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <img src={rappiLogo} alt="Rappi" style={styles.logoImg} />
+            <span style={styles.logoText}>Makers</span>
+          </div>
+          <small style={styles.logoSub}>Análisis de tiendas</small>
+        </div>
+
+        <div style={styles.section}>
+          <div style={styles.sectionLabel}>Menu</div>
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            return (
+              <div
+                key={item.label}
+                className="nav-item"
+                style={{
+                  ...styles.navItem,
+                  ...(isActive ? styles.navItemActive : {}),
+                }}
+                onClick={() => {
+                  navigate(item.path);
+                  setMobileOpen(false);
+                }}
+              >
+                <span style={styles.navIcon}>{item.icon}</span>
+                {item.label}
+                {isActive && <div style={styles.activeDot} />}
+              </div>
+            );
+          })}
+        </div>
+
+        <div style={styles.divider} />
+
+        <div style={styles.section}>
+          <div style={styles.sectionLabel}>AI</div>
           <div
-            key={item.label}
             className="nav-item"
-            style={{
-              ...styles.navItem,
-              ...(item.active ? styles.navItemActive : {}),
+            style={styles.navItem}
+            onClick={() => {
+              onOpenChat();
+              setMobileOpen(false);
             }}
           >
-            <span style={styles.navIcon}>{item.icon}</span>
-            {item.label}
-            {item.active && <div style={styles.activeDot} />}
+            <span style={styles.navIcon}>
+              <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
+                <path
+                  d="M2 13L9 3l7 10H2z"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+            Chat Asistente
+            <span style={styles.aiBadge}>AI</span>
           </div>
-        ))}
-      </div>
-
-      {/* Divisor */}
-      <div style={styles.divider} />
-
-      {/* Nav AI */}
-      <div style={styles.section}>
-        <div style={styles.sectionLabel}>AI</div>
-        <div className="nav-item" style={styles.navItem} onClick={onOpenChat}>
-          <span style={styles.navIcon}>
-            <svg width="15" height="15" viewBox="0 0 18 18" fill="none">
-              <path d="M2 13L9 3l7 10H2z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
-            </svg>
-          </span>
-          Chat Asistente
-          <span style={styles.aiBadge}>AI</span>
         </div>
-      </div>
 
-      <div style={{ flex: 1 }} />
+        <div style={{ flex: 1 }} />
 
-      {/* Stats rápidas */}
-      <div style={styles.quickStats}>
-        <div style={styles.statItem}>
-          <div style={styles.statValue}>--%</div>
-          <div style={styles.statLabel}>Tiempo</div>
-        </div>
-        <div style={styles.statDivider} />
-        <div style={styles.statItem}>
-          <div style={styles.statValue}>--</div>
-          <div style={styles.statLabel}>Tiendas</div>
-        </div>
-      </div>
-
-      {/* Usuario */}
-      <div style={styles.bottom}>
-        <div style={styles.userPill}>
-          <div style={styles.avatar}>--</div>
-          <div style={{ flex: 1 }}>
-            <div style={styles.userName}>Usuario</div>
-            <div style={styles.userRole}>Sin sesión</div>
+        <div style={styles.bottom}>
+          <div style={styles.userPill}>
+            <div style={styles.avatar}>--</div>
+            <div style={{ flex: 1 }}>
+              <div style={styles.userName}>Usuario</div>
+              <div style={styles.userRole}>Sin sesión</div>
+            </div>
+            <div style={styles.onlineIndicator} />
           </div>
-          <div style={styles.onlineIndicator} />
         </div>
-      </div>
-
-    </aside>
+      </aside>
+    </>
   );
 }
 
 const styles = {
+  hamburger: {
+    display: "none",
+    position: "fixed",
+    top: "12px",
+    left: "12px",
+    zIndex: 30,
+    width: "38px",
+    height: "38px",
+    borderRadius: "10px",
+    background: "white",
+    border: "0.5px solid rgba(0,0,0,0.08)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  },
+  closeBtn: {
+    display: "none",
+    position: "absolute",
+    top: "14px",
+    right: "14px",
+    width: "28px",
+    height: "28px",
+    borderRadius: "7px",
+    background: "rgba(255,255,255,0.12)",
+    border: "none",
+    cursor: "pointer",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
+  },
   sidebar: {
     width: "230px",
     background: "#FF441F",
@@ -121,6 +204,8 @@ const styles = {
     flexDirection: "column",
     flexShrink: 0,
     height: "100%",
+    position: "relative",
+    overflowY: "auto",
   },
   logo: {
     padding: "20px 20px 14px",
@@ -149,9 +234,7 @@ const styles = {
     letterSpacing: "0.3px",
     marginTop: "2px",
   },
-  section: {
-    padding: "16px 12px 6px",
-  },
+  section: { padding: "16px 12px 6px" },
   sectionLabel: {
     fontSize: "9px",
     fontWeight: 600,
@@ -209,39 +292,6 @@ const styles = {
     color: "white",
     letterSpacing: "0.5px",
     fontFamily: "'DM Sans', sans-serif",
-  },
-  quickStats: {
-    margin: "0 14px 14px",
-    background: "rgba(255,255,255,0.15)",
-    borderRadius: "10px",
-    border: "0.5px solid rgba(255,255,255,0.2)",
-    padding: "12px 14px",
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-  },
-  statItem: {
-    flex: 1,
-    textAlign: "center",
-  },
-  statValue: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: "15px",
-    fontWeight: 700,
-    color: "white",
-  },
-  statLabel: {
-    fontSize: "9px",
-    color: "rgba(255,255,255,0.4)",
-    marginTop: "2px",
-    fontFamily: "'DM Sans', sans-serif",
-    textTransform: "uppercase",
-    letterSpacing: "0.8px",
-  },
-  statDivider: {
-    width: "0.5px",
-    height: "28px",
-    background: "rgba(255,255,255,0.2)",
   },
   bottom: {
     padding: "12px",

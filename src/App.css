@@ -144,3 +144,66 @@ body {
   transform: translateY(-1px);
   transition: all 0.15s ease;
 }
+
+/* RESPONSIVE  */
+
+/* Overlay oscuro cuando el sidebar está abierto en móvil */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 40;
+}
+.sidebar-overlay.active { display: block; }
+
+/* Sidebar se esconde en móvil y se desliza al abrir */
+@media (max-width: 768px) {
+  .sidebar-mobile {
+    position: fixed !important;
+    left: -230px !important;
+    top: 0;
+    height: 100vh !important;
+    z-index: 50;
+    transition: left 0.25s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+  }
+  .sidebar-mobile.open {
+    left: 0 !important;
+  }
+  /* Botón hamburguesa visible solo en móvil */
+  .hamburger-btn {
+    display: flex !important;
+  }
+  /* Botón cerrar del sidebar visible solo en móvil */
+  .sidebar-close-btn {
+    display: flex !important;
+  }
+  /* Topbar con padding para no tapar el hamburguesa */
+  .topbar-responsive {
+    padding-left: 58px !important;
+  }
+  /* Métricas: 2 columnas en móvil */
+  .metrics-grid-responsive {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Gráficas: 1 columna en móvil */
+  .chart-row-responsive {
+    grid-template-columns: 1fr !important;
+  }
+  .bottom-row-responsive {
+    grid-template-columns: 1fr !important;
+  }
+  /* Chat ocupa toda la pantalla en móvil */
+  .chat-panel-mobile {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    z-index: 60;
+  }
+  /* html y body permiten scroll en móvil */
+  html, body, #root {
+    overflow: auto !important;
+    height: auto !important;
+  }
+}
